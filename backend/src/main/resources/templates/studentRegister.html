@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+
+</head>
+
+<body>
+    <section>
+		<div class="container p-3">
+			<div class="row">
+				<div class="col-md-6 offset-md-3">
+					<div class="card">
+						<div class="card-header text-center fs-4">Student Registration</div>
+
+						<div class="card-body">
+							<form action="studentRegister" method="post">
+								<div class="mb-3">
+									<label>Enter Full Name</label> <input type="text" name="Name"
+										class="form-control">
+								</div>
+								<div class="mb-3">
+									<label>Enter SRN</label> <input type="text" name="SRN"
+										class="form-control">
+								</div>
+
+								<div class="mb-3">
+									<label>Enter Branch</label> <input type="text"
+										name="Branch" class="form-control">
+								</div>
+
+								<div class="mb-3">
+									<label>Enter Password</label> <input type="text"
+										name="Password" class="form-control">
+								</div>
+								<button class="btn btn-primary col-md-12">Register</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+    </section>
+</body>
+
+</html>

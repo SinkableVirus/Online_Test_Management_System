@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th = "https://www.thymeleaf.org">
+
+    <head>
+        <script>
+            var count = 0
+            const questions = []
+            const options = []
+            const answers = []
+
+            const handleAdd = (event) => {
+                const testElement = document.getElementById("test")
+                const question = document.getElementById("question").value
+                const option1 = document.getElementById("option1").value
+                const option2 = document.getElementById("option2").value
+                const option3 = document.getElementById("option3").value
+                const option4 = document.getElementById("option4").value
+                const correctOption = document.getElementById("correctOption").value
+                
+                count += 1
+                
+                questions.push(question)
+                options.push([
+                    option1,
+                    option2,
+                    option3,
+                    option4
+                ])
+                answers.push(correctOption)
+
+                testElement.innerText += count + ") " 
+                testElement.innerText += question + "\n"
+                testElement.innerText += "a) " + option1 + "\n"
+                testElement.innerText += "b) " + option2 + "\n"
+                testElement.innerText += "c) " + option3 + "\n"
+                testElement.innerText += "d) " + option4 + "\n\n"
+
+                // const payloadElement = document.getElementById("payload")
+                // const value = JSON.stringify({
+                //     "questions": questions,
+                //     "options": options
+                // })
+                // console.log(value)
+                // payloadElement.value = value
+            }
+
+            const handleSubmit = (event) => {
+                const testElement = document.getElementById("test")
+                const request = new XMLHttpRequest()
+                const body = JSON.stringify({
+                    "questions": questions,
+                    "options": options,
+                    "answers": answers
+                })
+
+                request.open("POST", "http://localhost:8080/submitTest")
+                request.setRequestHeader("Content-Type", "application/json")
+                request.send(body)
+
+                window.location.assign("http://localhost:8080/teacherDashboard")
+            }
+        </script>
+    </head>
+
+    <body>
+        <div>
+            <p id = "test">
+
+            </p>
+        </div>
+        <div>
+            <input id = "question" type = "text" placeholder = "Enter the question" />
+            <br />
+            <span>a) </span> <input id = "option1" type = "text" placeholder = "Enter option A" />
+            <br />
+            <span>b) </span> <input id = "option2" type = "text" placeholder = "Enter option B" />
+            <br />
+            <span>c) </span> <input id = "option3" type = "text" placeholder = "Enter option C" />
+            <br />
+            <span>d) </span> <input id = "option4" type = "text" placeholder = "Enter option D" />
+            <br />
+            <span>Correct Option: </span> <input id = "correctOption" type = "text" placeholder = "Enter the correct option" />
+            <input type = "button" value = "Add" onclick = "handleAdd(event)" />
+            <br />
+            <!-- <form enctype = "text/plain" method = "POST" action = "http://localhost:8080/submitTest">
+                <input id = "payload" type = "text" style = "display: none;" name = "data" />
+                <input type = "submit" />
+            </form> -->
+            <input type = "button" value = "Submit" onclick = "handleSubmit(event)" />
+        </div>
+    </body>
+
+</html>
