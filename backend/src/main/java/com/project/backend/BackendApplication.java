@@ -11,8 +11,5 @@ public class BackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
-		// Admin a = new Admin (123, "testing"); //this should print "peace" if connection is established.
-		// Admin a2 = new Admin (123, "testing"); //this should print "peace" if connection is established.
-		// Student a3 = new Student("a","b","c","d");
 	}
 }

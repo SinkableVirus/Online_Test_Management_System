@@ -1,14 +1,85 @@
 <!DOCTYPE html>
-<html xmlns:th = "https://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    <head>
+        .top-buttons {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+        }
 
-    </head>
+        input[type="submit"],
+        .see-reviews-button,
+        .logout-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            margin-right: 10px;
+        }
 
-    <body>
-        <form method = "GET" action = "http://localhost:8080/uploadTest">
-            <input type = "submit" value = "Upload Test" />
+        .test-container {
+            margin-top: 50px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .test-container p {
+            margin-bottom: 10px;
+        }
+
+        .see-reviews-button {
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        const handleSeeReviews = (event) => {
+            const parameters = new URLSearchParams(window.location.search);
+            const teacherId = parameters.get("teacherId");
+            window.location.assign(`http://${window.location.host}/seeTestReview?teacherId=${teacherId}&testId=${event.target.id}`);
+        };
+
+        const handleLogout = (event) => {
+            window.location.assign(`http://${window.location.host}/`);
+        }
+
+        const handleClickLeaderboard = (event) => {
+            window.location.assign(`http://${window.location.host}/leaderboard`)
+        }
+    </script>
+</head>
+
+<body>
+    <div class="top-buttons">
+        <input type="button" value="Logout" class="logout-button" onclick="handleLogout(event)" />
+
+        <form method="GET" action="/uploadTest">
+            <input style="display: none;" type="text" name="teacherId" th:value="${teacherId}" />
+            <input type="submit" value="Upload Test" class="logout-button" />
         </form>
-    </body>
+
+        <input type = "button" class = "logout-button" value = "View Leaderboard" onclick = "handleClickLeaderboard(event)" />
+    </div>
+
+    <div>
+        <div th:each="testId: ${testIds}" class="test-container">
+            <p th:text="${testId}" class="fw-bold"></p>
+            <button th:id="${testId}" type="button" class="see-reviews-button" onclick="handleSeeReviews(event)">See Reviews</button>
+        </div>
+    </div>
+</body>
 
 </html>

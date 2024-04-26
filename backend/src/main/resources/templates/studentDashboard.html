@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .button-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+        }
+
+        .button-container button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .button-container button:hover {
+            background-color: #45a049;
+        }
+
+        .test-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .test-card h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .test-card p {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .test-card button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .test-card button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        const handleTakeTest = (event, startDateTime, endDateTime) => {
+            const splitStartDateTime = startDateTime.split(" ")
+            const startDate = splitStartDateTime[0]
+            const startTime = splitStartDateTime[1]
+            const splitEndDateTime = endDateTime.split(" ")
+            const endDate = splitEndDateTime[0]
+            const endTime = splitEndDateTime[1]
+
+            const splitStartDate = startDate.split("-")
+            
+            const splitStartTime = startTime.split(":")
+            const splitEndTime = endTime.split(":")
+
+            const totalStartSeconds = (splitStartTime[0] * 3600) + (splitStartTime[1] * 60) + (splitStartTime[2] * 1)
+            const date = new Date()
+            const currentYear = date.getFullYear()
+            const currentMonth = date.getMonth() + 1
+            const currentDay = date.getDate()
+            const currentHour = date.getHours()
+            const currentMinute = date.getMinutes()
+            const currentSeconds = date.getSeconds()
+            const totalCurrentSeconds = (currentHour * 3600) + (currentMinute * 60) + (currentSeconds * 1)
+
+            const timeDifference = totalCurrentSeconds - totalStartSeconds
+
+            if(currentYear < parseInt(splitStartDate[0])) {
+                alert("Early")
+            } else if(currentYear === parseInt(splitStartDate[0])) {
+                if(currentMonth < parseInt(splitStartDate[1])) {
+                    alert("Early")
+                } else if(currentMonth === parseInt(splitStartDate[1])) {
+                    if(currentDay < parseInt(splitStartDate[2])) {
+                        alert("Early")
+                    } else if(currentDay === parseInt(splitStartDate[2])) {
+                        if(timeDifference < 0) {
+                            alert("Early")
+                        } else if(timeDifference >= 0 && timeDifference <= 1800) {
+                            const parameters = new URLSearchParams(window.location.search)
+                            const SRN = parameters.get("SRN")
+                            window.location.assign(`http://${window.location.host}/takeTest?SRN=${SRN}&testId=${event.target.id}`)
+                        } else {
+                            alert("Late")
+                        }
+                    } else {
+                        alert("Late")
+                    }
+                } else {
+                    alert("Late")
+                }
+            } else {
+                alert("Late")
+            }
+
+        }
+
+        const viewPreviousTests = () => {
+            const parameters = new URLSearchParams(window.location.search);
+            const SRN = parameters.get("SRN");
+            window.location.assign(`http://${window.location.host}/viewPreviousTests?SRN=${SRN}`);
+        }
+
+        const handleLogout = (event) => {
+            window.location.assign(`http://${window.location.host}/`)
+        }
+    </script>
+</head>
+<body>
+    <h1>Student Dashboard</h1>
+    <div class="button-container">
+        <button onclick="handleLogout(event)">Logout</button>
+        <br>
+        <button onclick="viewPreviousTests()">View Previous Tests</button>
+    </div>
+    <div th:each="test: ${tests}">
+        <div class="test-card">
+            <h2 th:text="${test.subject}"></h2>
+            <p>Difficulty: <span th:text="${test.difficulty}"></span></p>
+            <p>Start Time: <span th:text="${test.startDateTime}"></span></p>
+            <p>End Time: <span th:text="${test.endDateTime}"></span></p>
+            <p th:text="${test.description}"></p>
+            <button th:id="${test.testId}" th:attr="onclick=|handleTakeTest(event, '${test.getStartDateTime()}', '${test.getEndDateTime()}')|">Take Test</button>
+        </div>
+    </div>
+</body>
+</html>

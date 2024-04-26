@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Your Title</title>
+    <style>
+        /* CSS styles from file2 */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative; /* Ensure the body is relatively positioned */
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Additional CSS styles specific to file1 */
+        #timer {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            position: fixed; /* Fix the position of the timer */
+            top: 20px; /* Position from the top */
+            right: 20px; /* Position from the right */
+            z-index: 1000; /* Ensure the timer is above other elements */
+        }
+
+        .question-container {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .question-container p {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .question-container input[type="radio"] {
+            margin-right: 5px; /* Add margin between radio button and options */
+        }
+
+        .option-label {
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        input[type="submit"] {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        const requestBody = {
+            SRN: "",
+            testId: "",
+            markedOptions: {}
+        }
+
+        const handleClick = (event) => {
+            requestBody.markedOptions[event.target.name] = event.target.value
+        }
+
+        const handleSubmit = (event) => {
+            const parameters = new URLSearchParams(window.location.search)
+            requestBody.SRN = parameters.get("SRN")
+            requestBody.testId = parameters.get("testId")
+
+            const request = new XMLHttpRequest()
+            request.open("POST", `http://${window.location.host}/submitStudentTest`)
+            request.setRequestHeader("Content-Type", "application/json")
+            request.send(JSON.stringify(requestBody))
+
+            setTimeout(() => {
+                window.location.assign(`http://${window.location.host}/viewTestResult?SRN=${requestBody.SRN}&testId=${requestBody.testId}`)
+            }, 1000)
+        }
+
+        const startTimer = (event, startDateTime, endDateTime) => {
+            const splitStartDateTime = startDateTime.split(" ")
+            const startDate = splitStartDateTime[0]
+            const startTime = splitStartDateTime[1]
+            const splitEndDateTime = endDateTime.split(" ")
+            const endDate = splitEndDateTime[0]
+            const endTime = splitEndDateTime[1]
+            
+            const splitStartTime = startTime.split(":")
+            const splitEndTime = endTime.split(":")
+
+            const totalStartSeconds = (splitStartTime[0] * 3600) + (splitStartTime[1] * 60) + (splitStartTime[2] * 1)
+            const totalEndSeconds = (splitEndTime[0] * 3600) + (splitEndTime[1] * 60) + (splitEndTime[2] * 1)
+
+            let testTime = totalEndSeconds - totalStartSeconds;
+            
+            const timer = setInterval(() => {
+                if(testTime === 0) {
+                    handleSubmit()
+                }
+                const timerElement = document.getElementById("timer")
+                let hours = Math.floor(testTime / 3600)
+                let minutes = Math.floor((testTime % 3600) / 60)
+                let seconds = (testTime % 3600) % 60
+                timerElement.innerText = `${hours}:${minutes}:${seconds}`
+                testTime--
+            }, 1000)
+        }
+    </script>
+</head>
+<body th:attr="onload=|startTimer(event, '${test.getStartDateTime()}', '${test.getEndDateTime()}')|">
+    <div id="timer"></div>
+    <h2>Questions</h2>
+    <div th:each="question, questionIndex : ${test.getQuestionList()}" class="question-container">
+        <p th:text="|${questionIndex.index + 1}) ${question.getQuestion()}|" />
+        <div th:each="option : ${question.getOptions()}">
+            <input onclick="handleClick(event)" type="radio" th:value="${question.getOptionName(option)}" th:name="${question.getQuestionId()}" />
+            <label class="option-label" th:text="${option}"></label>
+        </div>
+    </div>
+    <input type="submit" onclick="handleSubmit(event)" />
+</body>
+</html>

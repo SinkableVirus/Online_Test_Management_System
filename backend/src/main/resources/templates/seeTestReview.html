@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Your Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .question-container {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .question-container p {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .option-container p {
+            margin-bottom: 5px;
+        }
+
+        .review-container {
+            margin-bottom: 20px;
+        }
+
+        .review-container p {
+            margin-bottom: 5px;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+
+        .reviews-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .reviews-table th,
+        .reviews-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+        }
+
+        .reviews-table th {
+            background-color: #f2f2f2;
+        }
+
+        .reviews-table td:last-child {
+            border-right: none;
+        }
+    </style>
+    <script>
+        const handleBack = (event) => {
+            const parameters = new URLSearchParams(window.location.search);
+            const teacherId = parameters.get("teacherId");
+            window.location.assign(`http://${window.location.host}/teacherDashboard?teacherId=${teacherId}`);
+        };
+    </script>
+</head>
+
+<body>
+    <input type="button" value="Back" onclick="handleBack(event)" />
+    <h2>Test ID: <span th:text="${test.getTestId()}"></span></h2>
+
+    <div th:each="question, questionStatus: ${test.getQuestionList()}" class="question-container">
+        <p class="question-number" th:text="'Question ' + (${questionStatus.index + 1})"></p>
+        <p th:text="${question.getQuestion()}" />
+        <div th:each="option: ${question.getOptions()}" class="option-container">
+            <p th:text="${question.getOptionName(option) + ') ' + option}"></p>
+        </div>
+
+        <h3>Student Reviews:</h3>
+        <table class="reviews-table">
+            <thead>
+                <tr>
+                    <th>SRN</th>
+                    <th>Review</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="SRN, status: ${studentReviews.get(questionStatus.index).getSRNs()}" class="review-container">
+                    <td th:text="${SRN}"></td>
+                    <td th:text="${studentReviews.get(questionStatus.index).getReviews().get(status.index)}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

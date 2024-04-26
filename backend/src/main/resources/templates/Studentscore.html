@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Scores</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Add custom styles here if needed */
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .card.dark-mode {
+            background-color: #1f1f1f;
+            border-color: #333;
+        }
+        .table.dark-mode th,
+        .table.dark-mode td {
+            border-color: #333;
+            color: #ffffff;
+        }
+        .table.dark-mode thead {
+            background-color: #333;
+        }
+    </style>
+</head>
+
+<body class="dark-mode">
+    <div class="container">
+        <h1 class="mt-4 mb-3">Test Scores</h1>
+        <div class="card mb-4 dark-mode">
+            <div class="card-body">
+                <h5 class="card-title">Test Information</h5>
+                <p class="card-text">Test ID: <span th:text="${testId}"></span></p>
+                <p class="card-text">Mean Score: <span th:text="${mean}"></span></p>
+                <p class="card-text">Median Score: <span th:text="${median}"></span></p>
+            </div>
+        </div>
+        <div class="card dark-mode">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Top Scores</h2>
+                <div class="table-responsive">
+                    <table class="table dark-mode">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="score : ${topScores}">
+                                <td th:text="${score.name}"></td>
+                                <td th:text="${score.score}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

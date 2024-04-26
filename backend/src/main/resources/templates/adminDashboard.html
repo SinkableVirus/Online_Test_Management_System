@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Tests</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <h1>Pending Tests</h1>
+    <table class="table bg-custom table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Test ID</th>
+          <th>Teacher ID</th>
+          <th>Description</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Difficulty</th>
+          <th>Update</th>
+          <th>Accept</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="text-light" th:each="data : ${pendingTestList}">
+          <td th:text="${data[0]}"></td>
+          <td th:text="${data[1]}"></td>
+          <td th:text="${data[6]}"></td>
+          <td th:text="${data[4]}"></td>
+          <td th:text="${data[5]}"></td>
+          <td th:text="${data[3]}"></td>
+
+          <td>
+            <form th:action="@{/updateTestForm}" method="get">
+              <input type="hidden" name="testId" th:value="${data[0]}" />
+              <button type="submit" class="btn btn-dark">Update</button>
+            </form>
+          </td>
+          <td>
+            <form th:action="@{/acceptTest}" method="post">
+              <input type="hidden" name="testId" th:value="${data[0]}" />
+              <button type="submit" class="btn btn-success">Accept</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <form th:action="@{/undoUpdateTest}" method="post">
+      <button class="btn btn-dark"> Undo Previous Update </button>
+    </form>
+
+
+    <h1>Accepted Tests</h1>
+    <!-- Add Bootstrap classes to your table -->
+    <table class="table bg-custom table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Test ID</th>
+          <th>Teacher ID</th>
+          <th>Description</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Difficulty</th>
+          <th>Undo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="text-light" th:each="data : ${acceptedTestList}">
+          <td th:text="${data[0]}"></td>
+          <td th:text="${data[1]}"></td>
+          <td th:text="${data[6]}"></td>
+          <td th:text="${data[4]}"></td>
+          <td th:text="${data[5]}"></td>
+          <td th:text="${data[3]}"></td>
+
+          <td>
+            <form th:action="@{/undoAcceptTest}" method="post">
+              <input type="hidden" name="testId" th:value="${data[0]}" />
+              <button type="submit" class="btn btn-dark">Undo</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+    <!-- Add Bootstrap JS -->
+    <style>
+      .bg-custom {
+        background-color: #7f3bde;
+      }
+    </style>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

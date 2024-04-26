@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .table {
+            background-color: #1f1f1f; /* Dark table background color */
+            color: #ffffff; /* Light table text color */
+        }
+        .thead-dark th {
+            background-color: #6a1b9a; /* Purple header background color */
+            border-color: #6a1b9a; /* Purple header border color */
+            color: #ffffff; /* Light header text color */
+        }
+        .btn-primary {
+            background-color: #6a1b9a; /* Purple button background color */
+            border-color: #6a1b9a; /* Purple button border color */
+        }
+        .btn-primary:hover {
+            background-color: #4a148c; /* Darker purple on hover */
+            border-color: #4a148c; /* Darker purple border on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Leaderboard</h1>
+        <div class="row">
+            <div class="col">
+                <table class="table table-striped mb-5">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Test ID</th>
+                            <th>Subject</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="test : ${tests}">
+                            <td th:text="${test.testId}">Test ID</td>
+                            <td th:text="${test.subject}">Subject</td>
+                            <td>
+                                <a class="btn btn-primary" th:href="@{'/student_score?testId=' + ${test.testId}}">View Details</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

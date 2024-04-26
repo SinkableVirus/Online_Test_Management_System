@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <script>
+            const handleBack = (event) => {
+                const parameters = new URLSearchParams(window.location.search)
+                const SRN = parameters.get("SRN")
+                window.location.assign(`http://${window.location.host}/studentDashboard?SRN=${SRN}`)
+            }
+        </script>
+    </head>
+
+    <body>
+        <h2 th:text = "${'Your score: ' + testResult}" />
+        <input type = "button" value = "Back" onclick = "handleBack(event)" />
+    </body>
+</html>

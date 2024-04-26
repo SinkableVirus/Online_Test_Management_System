@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Previous Tests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        const reviewTest = (event) => {
+            const parameters = new URLSearchParams(window.location.search);
+            const SRN = parameters.get("SRN");
+            const testId = event.target.id;
+            window.location.assign(`http://${window.location.host}/reviewTest?SRN=${SRN}&testId=${testId}`);
+        }
+    </script>
+</head>
+<body>
+    <h1>Previous Tests</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Test ID</th>
+                <th>Test Name</th>
+                <th>Marks Secured</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="test : ${tests}">
+                <td th:text="${test.testId}"></td>
+                <td th:text="${test.Subject}"></td>
+                <td th:text="${test.markssecured}"></td>
+                <td><button th:id="${test.testId}" th:onclick="reviewTest(event)">Review Test</button></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

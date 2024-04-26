@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <script>
+            const handleClick = (event) => {
+                window.location.assign(`http://${window.location.host}/`)
+            }
+        </script>
+    </head>
+
+    <body>
+        <h2>Invalid Session</h2>
+        <input type = "button" value = "Go to Home" onclick = "handleClick(event)" />
+    </body>
+</html>

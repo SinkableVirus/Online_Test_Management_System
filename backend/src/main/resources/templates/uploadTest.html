@@ -1,93 +1,318 @@
 <!DOCTYPE html>
-<html xmlns:th = "https://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org">
 
-    <head>
-        <script>
-            var count = 0
-            const questions = []
-            const options = []
-            const answers = []
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-            const handleAdd = (event) => {
-                const testElement = document.getElementById("test")
-                const question = document.getElementById("question").value
-                const option1 = document.getElementById("option1").value
-                const option2 = document.getElementById("option2").value
-                const option3 = document.getElementById("option3").value
-                const option4 = document.getElementById("option4").value
-                const correctOption = document.getElementById("correctOption").value
-                
-                count += 1
-                
-                questions.push(question)
-                options.push([
-                    option1,
-                    option2,
-                    option3,
-                    option4
-                ])
-                answers.push(correctOption)
+        p {
+            margin: 5px;
+            padding: 0px;
+        }
 
-                testElement.innerText += count + ") " 
-                testElement.innerText += question + "\n"
-                testElement.innerText += "a) " + option1 + "\n"
-                testElement.innerText += "b) " + option2 + "\n"
-                testElement.innerText += "c) " + option3 + "\n"
-                testElement.innerText += "d) " + option4 + "\n\n"
+        h3 {
+            margin-bottom: 0px;
+        }
 
-                // const payloadElement = document.getElementById("payload")
-                // const value = JSON.stringify({
-                //     "questions": questions,
-                //     "options": options
-                // })
-                // console.log(value)
-                // payloadElement.value = value
-            }
+        .outer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
 
-            const handleSubmit = (event) => {
-                const testElement = document.getElementById("test")
-                const request = new XMLHttpRequest()
-                const body = JSON.stringify({
-                    "questions": questions,
-                    "options": options,
-                    "answers": answers
-                })
+        .testDetails {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            background-color: rgb(210, 210, 210);
+            padding: 20px 30px 20px 20px;
+            border: 1px solid rgb(171, 162, 162);
+            border-radius: 5px;
+        }
 
-                request.open("POST", "http://localhost:8080/submitTest")
-                request.setRequestHeader("Content-Type", "application/json")
-                request.send(body)
+        .detailsRow {
+            display: flex;
+            width: 100%;
+        }
 
-                window.location.assign("http://localhost:8080/teacherDashboard")
-            }
-        </script>
-    </head>
+        .detailsItem {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            padding: 0px 10px 0px 10px;
+        }
 
-    <body>
-        <div>
-            <p id = "test">
+        .testContent {
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+            padding: 0px 30px 0px 30px;
+        }
 
-            </p>
+        .form-label {
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: calc(100% - 20px);
+            padding: 5px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+
+        .question-options-container {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            padding: 30px 40px 20px 40px;
+        }
+
+        .label-input-row {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .label-input-row label {
+            flex: 0 0 auto;
+            width: 120px;
+            margin-right: 10px;
+        }
+
+        .label-input-row input {
+            flex: 1 1 auto;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+    </style>
+
+
+    <script>
+        var count = 0
+        var subject = ""
+        var difficulty = ""
+        var startDateTime = ""
+        var endDateTime = ""
+        var description = ""
+        const questions = []
+        const options = []
+        const answers = []
+        const marks = []
+
+        const handleBackClick = (event) => {
+            const parameters = new URLSearchParams(window.location.search)
+            window.location.assign(`http://${window.location.host}/teacherDashboard?teacherId=${parameters.get("teacherId")}`)
+        }
+
+        const handleDelete = (event, index) => {
+            questions.splice(index, 1)
+            options.splice(index, 1)
+            answers.splice(index, 1)
+
+            document.getElementById("test").innerHTML = questions.map((question, index) =>
+                `<div>
+                        <h3>${index + 1}) ${question}</h3>
+                        <p>a) ${options[index][0]}</p>
+                        <p>b) ${options[index][1]}</p>
+                        <p>c) ${options[index][2]}</p>
+                        <p>d) ${options[index][3]}</p>
+                        <p>Marks: ${marks[index]}</p>
+                        <input style = "margin-bottom: 10px;" type = "button" value = "Delete" onclick = "handleDelete(event, ${index})" />
+                    </div>`
+            ).join("")
+        }
+
+        const handleAdd = (event) => {
+            const testElement = document.getElementById("test")
+            const question = document.getElementById("question").value
+            const option1 = document.getElementById("option1").value
+            const option2 = document.getElementById("option2").value
+            const option3 = document.getElementById("option3").value
+            const option4 = document.getElementById("option4").value
+            const correctOption = document.getElementById("correctOption").value
+            const questionMarks = document.getElementById("marks").value
+
+            count += 1
+
+            questions.push(question)
+            options.push([
+                option1,
+                option2,
+                option3,
+                option4
+            ])
+            answers.push(correctOption)
+            marks.push(questionMarks)
+
+            testElement.innerHTML = questions.map((question, index) =>
+                `<div>
+                        <h3>${index + 1}) ${question}</h3>
+                        <p>a) ${options[index][0]}</p>
+                        <p>b) ${options[index][1]}</p>
+                        <p>c) ${options[index][2]}</p>
+                        <p>d) ${options[index][3]}</p>
+                        <p>Marks: ${marks[index]}</p>
+                        <input style = "margin-bottom: 10px;" type = "button" value = "Delete" onclick = "handleDelete(event, ${index})" />
+                    </div>`
+            ).join("")
+
+            document.getElementById("question").value = ""
+            document.getElementById("option1").value = ""
+            document.getElementById("option2").value = ""
+            document.getElementById("option3").value = ""
+            document.getElementById("option4").value = ""
+            document.getElementById("correctOption").value = ""
+            document.getElementById("marks").value = ""
+        }
+
+        const handleSubmit = (event) => {
+            const testElement = document.getElementById("test")
+            subject = document.getElementById("subject").value
+            difficulty = document.getElementById("difficulty").value
+            startDateTime = document.getElementById("start").value
+            endDateTime = document.getElementById("end").value
+            description = document.getElementById("description").value
+
+            const parameters = new URLSearchParams(window.location.search)
+            const teacherId = parameters.get("teacherId")
+
+            const request = new XMLHttpRequest()
+            const body = JSON.stringify({
+                "teacherId": teacherId,
+                "subject": subject,
+                "difficulty": difficulty,
+                "startDateTime": startDateTime,
+                "endDateTime": endDateTime,
+                "description": description,
+                "questions": questions,
+                "options": options,
+                "answers": answers,
+                "marks": marks
+            })
+
+            request.open("POST", `http://${window.location.host}/submitTest`)
+            request.setRequestHeader("Content-Type", "application/json")
+            request.send(body)
+
+            window.location.assign(`http://${window.location.host}/teacherDashboard?teacherId=${teacherId}`)
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="back-button">
+        <input type="button" value="Back" onclick="handleBackClick(event)" />
+    </div>
+
+    <div class="outer">
+
+        <div class="testDetails">
+            <div class="detailsRow">
+                <div class="detailsItem">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input class="form-control" id="subject" type="text" placeholder="Enter the subject" />
+                </div>
+                <div class="detailsItem">
+                    <label for="difficulty" class="form-label">Difficulty</label>
+                    <input class="form-control" id="difficulty" type="text" placeholder="Enter difficulty" />
+                </div>
+            </div>
+            <br />
+            <div class="detailsRow">
+                <div class="detailsItem">
+                    <label for="start" class="form-label">Start Date and Time</label>
+                    <input class="form-control" id="start" type="text" placeholder="Start date and time" />
+                </div>
+                <div class="detailsItem">
+                    <label for="start" class="form-label">End Date and Time</label>
+                    <input class="form-control" id="end" type="text" placeholder="End date and time" />
+                </div>
+            </div>
+            <br />
+            <div class="detailsRow">
+                <div class="detailsItem">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea rows="5" class="form-control" id="description" placeholder="Enter the description"></textarea>
+                </div>
+            </div>
         </div>
-        <div>
-            <input id = "question" type = "text" placeholder = "Enter the question" />
-            <br />
-            <span>a) </span> <input id = "option1" type = "text" placeholder = "Enter option A" />
-            <br />
-            <span>b) </span> <input id = "option2" type = "text" placeholder = "Enter option B" />
-            <br />
-            <span>c) </span> <input id = "option3" type = "text" placeholder = "Enter option C" />
-            <br />
-            <span>d) </span> <input id = "option4" type = "text" placeholder = "Enter option D" />
-            <br />
-            <span>Correct Option: </span> <input id = "correctOption" type = "text" placeholder = "Enter the correct option" />
-            <input type = "button" value = "Add" onclick = "handleAdd(event)" />
-            <br />
-            <!-- <form enctype = "text/plain" method = "POST" action = "http://localhost:8080/submitTest">
-                <input id = "payload" type = "text" style = "display: none;" name = "data" />
-                <input type = "submit" />
-            </form> -->
-            <input type = "button" value = "Submit" onclick = "handleSubmit(event)" />
+
+        <div class="testContent">
+            <div id="test" style="margin-top: 30px;">
+
+            </div>
+
+            <div class="question-options-container">
+                <div class="label-input-row">
+                    <label for="question">Question:</label>
+                    <input class="form-control" id="question" type="text" placeholder="Enter the question" />
+                </div>
+                <div class="label-input-row">
+                    <label for="option1">a)</label>
+                    <input class="form-control" id="option1" type="text" placeholder="Enter option A" />
+                </div>
+                <div class="label-input-row">
+                    <label for="option2">b)</label>
+                    <input class="form-control" id="option2" type="text" placeholder="Enter option B" />
+                </div>
+                <div class="label-input-row">
+                    <label for="option3">c)</label>
+                    <input class="form-control" id="option3" type="text" placeholder="Enter option C" />
+                </div>
+                <div class="label-input-row">
+                    <label for="option4">d)</label>
+                    <input class="form-control" id="option4" type="text" placeholder="Enter option D" />
+                </div>
+                <div class="label-input-row">
+                    <label for="correctOption">Correct Option:</label>
+                    <input class="form-control" id="correctOption" type="text" placeholder="Enter the correct option" />
+                </div>
+                <div class="label-input-row">
+                    <label for="marks">Marks:</label>
+                    <input id="marks" type="text" placeholder="Enter marks" />
+                </div>
+                <br />
+                <input type="button" value="Add" onclick="handleAdd(event)" />
+            </div>
+
+            <input type="button" value="Submit" onclick="handleSubmit(event)" />
         </div>
-    </body>
+    </div>
+</body>
 
 </html>

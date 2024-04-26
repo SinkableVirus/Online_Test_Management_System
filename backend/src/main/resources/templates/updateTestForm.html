@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Update Test</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="bg-div d-flex flex-column align-items-center">
+            <div>
+                <h3 class='text-xl text-white'>Update Form with ID 
+                    <span th:text="${testId}">
+                    </span>
+                </h3>
+            </div>
+            <form th:action="@{/updateTest}" method="post" class="bg-light justify-content-center shadow rounded p-4 mb-4">
+                <input type="hidden" name="testId" th:value="${testId}" />
+                <div class="form-group">
+                    <label>Difficulty:</label>
+                    <select required name="difficulty" class="form-control">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date and Time:</label>
+                    <input
+                        required
+                        type="datetime-local"
+                        name="startDateTime"
+                        class="form-control"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>End Date and Time:</label>
+                    <input
+                        required
+                        type="datetime-local"
+                        name="endDateTime"
+                        class="form-control"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Submit
+                </button>
+            </form>
+            
+            
+            
+        </div>
+        
+        <style>
+            .bg-div {
+                background-color: #A73737
+            }
+        </style>
+        <script src="" async defer></script>
+    </body>
+</html>

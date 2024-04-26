@@ -5,14 +5,8 @@ import java.sql.Connection;
 import java.util.*;
 import java.sql.*;
 
-public class Teacher {
+public class Teacher extends User {
     private String ID;
-    private String Name;
-    private String Password;
-    private String Branch;
-    public Connection connection;
-    public Statement statement;
-    public ResultSet resultSet;
 
     public Teacher() {
         DatabaseConnection dbc = DatabaseConnection.getConnection();
@@ -28,9 +22,11 @@ public class Teacher {
         connection = dbc.connection;
     }
 
-    public void addTeacher() {
+    public void Add() {
         try {
-            String query = String.format("INSERT INTO Teacher (ID, Name, Password, Branch) VALUES ('%s', '%s', '%s', '%s');", ID, Name, Password, Branch);
+            String query = String.format(
+                    "INSERT INTO Teacher (ID, Name, Password, Branch) VALUES ('%s', '%s', '%s', '%s');", ID, Name,
+                    Password, Branch);
             statement = connection.createStatement();
             int rowsAffected = statement.executeUpdate(query);
             if (rowsAffected > 0) {
